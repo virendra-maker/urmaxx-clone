@@ -25,4 +25,50 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * APK table for storing modded and original APK information
+ */
+export const apks = mysqlTable("apks", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  status: varchar("status", { length: 50 }).notNull(), // "Free", "Premium Unlocked", etc.
+  size: varchar("size", { length: 50 }).notNull(), // "15MB", "25MB", etc.
+  downloads: int("downloads").default(0).notNull(),
+  imageUrl: text("imageUrl").notNull(),
+  borderColor: varchar("borderColor", { length: 50 }).notNull(), // "blue", "purple", "orange", etc.
+  category: varchar("category", { length: 100 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type APK = typeof apks.$inferSelect;
+export type InsertAPK = typeof apks.$inferInsert;
+
+/**
+ * Admin credentials table for authentication
+ */
+export const adminCredentials = mysqlTable("adminCredentials", {
+  id: int("id").autoincrement().primaryKey(),
+  username: varchar("username", { length: 100 }).notNull().unique(),
+  password: varchar("password", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AdminCredential = typeof adminCredentials.$inferSelect;
+export type InsertAdminCredential = typeof adminCredentials.$inferInsert;
+
+/**
+ * Admin activity logs table
+ */
+export const adminLogs = mysqlTable("adminLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  action: varchar("action", { length: 100 }).notNull(), // "CREATE", "UPDATE", "DELETE"
+  apkId: int("apkId"),
+  details: text("details"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AdminLog = typeof adminLogs.$inferSelect;
+export type InsertAdminLog = typeof adminLogs.$inferInsert;

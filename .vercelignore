@@ -1,0 +1,14 @@
+.git
+.gitignore
+README.md
+.env.local
+.env.*.local
+node_modules
+dist
+build
+.DS_Store
+*.log
+.vscode
+.idea
+todo.md
+seed-db.mjs

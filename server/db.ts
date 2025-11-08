@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, apks, InsertAPK, APK, adminCredentials, InsertAdminCredential, adminLogs, InsertAdminLog } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,80 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// APK queries
+export async function getAllAPKs(): Promise<APK[]> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get APKs: database not available");
+    return [];
+  }
+
+  return await db.select().from(apks);
+}
+
+export async function getAPKById(id: number): Promise<APK | undefined> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get APK: database not available");
+    return undefined;
+  }
+
+  const result = await db.select().from(apks).where(eq(apks.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createAPK(data: InsertAPK): Promise<APK> {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const result = await db.insert(apks).values(data);
+  const id = result[0].insertId as number;
+  const created = await getAPKById(id);
+  if (!created) throw new Error("Failed to create APK");
+  return created;
+}
+
+export async function updateAPK(id: number, data: Partial<InsertAPK>): Promise<APK> {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  await db.update(apks).set(data).where(eq(apks.id, id));
+  const updated = await getAPKById(id);
+  if (!updated) throw new Error("Failed to update APK");
+  return updated;
+}
+
+export async function deleteAPK(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  await db.delete(apks).where(eq(apks.id, id));
+}
+
+// Admin credentials queries
+export async function getAdminByUsername(username: string) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get admin: database not available");
+    return undefined;
+  }
+
+  const result = await db.select().from(adminCredentials).where(eq(adminCredentials.username, username)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createAdminLog(data: InsertAdminLog): Promise<void> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot create log: database not available");
+    return;
+  }
+
+  await db.insert(adminLogs).values(data);
+}

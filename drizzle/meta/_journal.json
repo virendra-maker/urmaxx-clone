@@ -1,5 +1,20 @@
 {
   "version": "7",
   "dialect": "mysql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1762609913874,
+      "tag": "0000_married_thaddeus_ross",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1762609956083,
+      "tag": "0001_closed_sabretooth",
+      "breakpoints": true
+    }
+  ]
 }
