@@ -113,3 +113,9 @@
     }
   }
 }
+{
+  "scripts": {
+    "build": "your-build-command",
+    "start": "your-start-command"
+  }
+}
